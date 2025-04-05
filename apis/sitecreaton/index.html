@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Site Creation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0d1117;
+      color: #c9d1d9;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      color: #58a6ff;
+    }
+    button {
+      background-color: #238636;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2ea043;
+    }
+    .result {
+      margin-top: 30px;
+      padding: 15px;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      background-color: #161b22;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>API Site Creation</h1>
+  <p>Click below to create your site.</p>
+
+  <button onclick="createSite()">Create Site</button>
+
+  <div class="result" id="result" style="display:none;">
+    <h2>Site Creation Complete!</h2>
+    <p>Your site has been created.</p>
+    <p>Redirecting you to your new site...</p>
+  </div>
+
+  <script>
+    function createSite() {
+      // Simulate site creation by generating a random ID
+      const randomID = Math.random().toString(36).substring(2, 12);
+
+      // Simulate site creation complete and show result
+      document.getElementById('result').style.display = 'block';
+
+      // Redirect after 3 seconds to the newly created site
+      setTimeout(function() {
+        window.location.href = `https://uxidone.github.io/uxidonesites/createauxidonesite/created/uxidonesites?id=${randomID}`;
+      }, 3000); // 3 seconds delay before redirection
+    }
+  </script>
+
+</body>
+</html>
