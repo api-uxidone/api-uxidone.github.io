@@ -1,96 +1,101 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Create Uxidone API Key</title>
+    <title>Uxidone API Key Creation</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
-            text-align: center;
+            line-height: 1.6;
         }
-        .key-display {
-            margin: 20px 0;
-            padding: 15px;
-            background: #f5f5f5;
-            border-radius: 5px;
-            word-break: break-all;
+        .container {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
         }
         button {
             background: #6a0dad;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 10px 15px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
         }
-        .instructions {
-            margin-top: 30px;
-            text-align: left;
+        .api-key {
+            font-family: monospace;
+            background: #eee;
+            padding: 10px;
+            border-radius: 4px;
+            word-break: break-all;
+        }
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <h1>Create Your Uxidone API Key</h1>
-    <p>Click the button below to generate a new API key</p>
+    <h1>Uxidone API Key Generator</h1>
     
-    <button id="create-btn">CREATE API KEY</button>
+    <div id="create-section">
+        <p>Click below to generate your API key:</p>
+        <button id="generate-btn">Generate API Key</button>
+    </div>
     
-    <div id="result-container" style="display: none;">
-        <div class="key-display">
-            <h3>Your New API Key:</h3>
-            <pre id="api-key"></pre>
-        </div>
-        <p>This key has been automatically added to your URL for easy copying.</p>
+    <div id="result-section" class="hidden container">
+        <h2>Your API Key</h2>
+        <div class="api-key" id="api-key-display"></div>
+        <p>This key has been automatically added to your URL and copied to clipboard.</p>
         
-        <div class="instructions">
-            <h3>How to use:</h3>
-            <p>Include in your requests as either:</p>
-            <ul>
-                <li>Header: <code>Authorization: Bearer <span id="key-for-header"></span></code></li>
-                <li>URL parameter: <code>?api=<span id="key-for-url"></span></code></li>
-            </ul>
-            <p><strong>Important:</strong> Save this key securely. You won't be able to see it again.</p>
-        </div>
+        <h3>Usage Examples</h3>
+        <h4>In Authorization Header:</h4>
+        <pre>Authorization: Bearer <span id="header-key-example"></span></pre>
+        
+        <h4>In URL Parameter:</h4>
+        <pre>GET /endpoint?<span id="url-key-example"></span></pre>
+        
+        <p><strong>Important:</strong> Save this key - you won't be able to see it again!</p>
     </div>
 
     <script>
-        document.getElementById('create-btn').addEventListener('click', function() {
+        document.getElementById('generate-btn').addEventListener('click', () => {
             // Generate random API key
-            const randomPart = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+            const randomString = Array.from(crypto.getRandomValues(new Uint8Array(12)))
                 .map(b => b.toString(16).padStart(2, '0'))
                 .join('')
                 .toUpperCase();
             
-            const apiKey = `UXIDONE_${randomPart}`;
+            const apiKey = `UXIDONE_${randomString}`;
             
             // Display the key
-            document.getElementById('api-key').textContent = apiKey;
-            document.getElementById('key-for-header').textContent = apiKey;
-            document.getElementById('key-for-url').textContent = apiKey;
-            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('api-key-display').textContent = apiKey;
+            document.getElementById('header-key-example').textContent = apiKey;
+            document.getElementById('url-key-example').textContent = apiKey;
             
-            // Update URL with the new key
-            window.history.pushState({}, '', `?api=${encodeURIComponent(apiKey)}`);
+            // Show result section
+            document.getElementById('result-section').classList.remove('hidden');
+            document.getElementById('create-section').classList.add('hidden');
+            
+            // Update URL
+            window.history.pushState({}, '', `?${apiKey}`);
             
             // Copy to clipboard
-            navigator.clipboard.writeText(apiKey).then(() => {
-                alert('API key copied to clipboard!');
-            });
+            navigator.clipboard.writeText(apiKey)
+                .then(() => console.log('API key copied to clipboard'))
+                .catch(err => console.error('Failed to copy:', err));
         });
         
         // Check for existing key in URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const existingKey = urlParams.get('api');
-        
-        if (existingKey && existingKey.startsWith('UXIDONE')) {
-            document.getElementById('api-key').textContent = existingKey;
-            document.getElementById('key-for-header').textContent = existingKey;
-            document.getElementById('key-for-url').textContent = existingKey;
-            document.getElementById('result-container').style.display = 'block';
-            document.getElementById('create-btn').style.display = 'none';
+        const existingKey = window.location.search.substring(1);
+        if (existingKey.startsWith('UXIDONE_')) {
+            document.getElementById('api-key-display').textContent = existingKey;
+            document.getElementById('header-key-example').textContent = existingKey;
+            document.getElementById('url-key-example').textContent = existingKey;
+            document.getElementById('result-section').classList.remove('hidden');
+            document.getElementById('create-section').classList.add('hidden');
         }
     </script>
 </body>
