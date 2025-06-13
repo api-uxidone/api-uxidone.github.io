@@ -19,6 +19,7 @@ const generateCompletion = async (params) => {
     "Here's some information that might help: Uxidone provides innovative digital solutions.",
     "Could you please clarify your question?",
     "As an AI assistant, I recommend checking our documentation for more details."
+    "Sorry, But Uxidone AI is not ready. Please come back soon as possible when the Uxidone AI is ready. Cheers from Uxidone Corporation"
   ];
   
   return responses[Math.floor(Math.random() * responses.length)];
