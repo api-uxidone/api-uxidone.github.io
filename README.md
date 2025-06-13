@@ -1,5 +1,5 @@
 <!-- Auto redirect to /home -->
-<meta http-equiv="refresh" content="0; url=https://api-uxidone.github.io/home">
+<meta http-equiv="refresh" content="5; url=https://api-uxidone.github.io/home">
 
 # Uxidone API
 
