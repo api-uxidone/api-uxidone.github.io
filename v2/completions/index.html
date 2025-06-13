@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Uxidone API v2 Completions</title>
+</head>
+<body>
+    <pre id="response">{
+    "error": {
+        "message": "You didn't provide an API key. You need to provide your API key in an Authorization header using Bearer auth (i.e. Authorization: Bearer YOUR_KEY), or as the password field (with blank username) if you're accessing the API from your browser and are prompted for a username and password. You can obtain an API key from https://api-uxidone.github.io/api/create",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": null
+    }
+}</pre>
+
+    <script>
+        // Check for API key in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const apiKey = urlParams.get('api_key');
+        
+        if (apiKey && apiKey.startsWith('UXIDONE')) {
+            // If valid API key is provided, show different content
+            document.getElementById('response').textContent = JSON.stringify({
+                id: "cmpl-" + Date.now(),
+                object: "text_completion",
+                created: Math.floor(Date.now() / 1000),
+                model: "uxidone-model-v2",
+                choices: [{
+                    text: "This is a successful response because a valid UXIDONE API key was provided.",
+                    index: 0,
+                    finish_reason: "length"
+                }]
+            }, null, 2);
+        }
+    </script>
+</body>
+</html>
