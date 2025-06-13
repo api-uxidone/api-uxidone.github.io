@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Uxidone API Key</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .key-display {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            word-break: break-all;
+        }
+        button {
+            background: #6a0dad;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .instructions {
+            margin-top: 30px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Create Your Uxidone API Key</h1>
+    <p>Click the button below to generate a new API key</p>
+    
+    <button id="create-btn">CREATE API KEY</button>
+    
+    <div id="result-container" style="display: none;">
+        <div class="key-display">
+            <h3>Your New API Key:</h3>
+            <pre id="api-key"></pre>
+        </div>
+        <p>This key has been automatically added to your URL for easy copying.</p>
+        
+        <div class="instructions">
+            <h3>How to use:</h3>
+            <p>Include in your requests as either:</p>
+            <ul>
+                <li>Header: <code>Authorization: Bearer <span id="key-for-header"></span></code></li>
+                <li>URL parameter: <code>?api=<span id="key-for-url"></span></code></li>
+            </ul>
+            <p><strong>Important:</strong> Save this key securely. You won't be able to see it again.</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('create-btn').addEventListener('click', function() {
+            // Generate random API key
+            const randomPart = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('')
+                .toUpperCase();
+            
+            const apiKey = `UXIDONE_${randomPart}`;
+            
+            // Display the key
+            document.getElementById('api-key').textContent = apiKey;
+            document.getElementById('key-for-header').textContent = apiKey;
+            document.getElementById('key-for-url').textContent = apiKey;
+            document.getElementById('result-container').style.display = 'block';
+            
+            // Update URL with the new key
+            window.history.pushState({}, '', `?api=${encodeURIComponent(apiKey)}`);
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(apiKey).then(() => {
+                alert('API key copied to clipboard!');
+            });
+        });
+        
+        // Check for existing key in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const existingKey = urlParams.get('api');
+        
+        if (existingKey && existingKey.startsWith('UXIDONE')) {
+            document.getElementById('api-key').textContent = existingKey;
+            document.getElementById('key-for-header').textContent = existingKey;
+            document.getElementById('key-for-url').textContent = existingKey;
+            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('create-btn').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
