@@ -2,33 +2,70 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Music API</title>
+    <title>Music API Endpoint</title>
     <script>
-        // Get query parameters
+        // Parse URL parameters
         const params = new URLSearchParams(window.location.search);
+        
+        // Verify required parameters exist
+        if (!params.has('player') || !params.has('version') || !params.has('from')) {
+            document.body.innerHTML = `
+                <h1>400 Bad Request</h1>
+                <p>Missing required parameters</p>
+                <p>Required format:</p>
+                <pre>api-uxidone.github.io/api/music?player=v2/play/musicplayer&version=v2/play&from=assets/music/putvejini</pre>
+            `;
+            return;
+        }
+
+        // Validate parameters
         const player = params.get('player');
         const version = params.get('version');
         const from = params.get('from');
         
-        // Validate request
         if (player === 'v2/play/musicplayer' && 
             version === 'v2/play' && 
-            from === 'assets-uxidone.github.io/assets/music/putvejini') {
+            from === 'assets/music/putvejini') {
             
-            // Redirect to actual music file
-            window.location.replace('/assets/music/putvejini.mp3');
+            // Serve the audio file directly (no redirect)
+            const audio = new Audio('/assets/music/putvejini.mp3');
+            audio.controls = true;
+            audio.style.width = '100%';
+            document.body.innerHTML = '';
+            document.body.appendChild(audio);
+            audio.play().catch(e => {
+                document.body.innerHTML = `
+                    <h1>404 Not Found</h1>
+                    <p>Audio file not found at: /assets/music/putvejini.mp3</p>
+                    <p>Please verify the file exists in your repository.</p>
+                `;
+            });
+            
         } else {
             document.body.innerHTML = `
                 <h1>400 Bad Request</h1>
-                <p>Invalid parameters. Required format:</p>
-                <pre>
-api-uxidone.github.io/api/music?player=v2/play/musicplayer
-&version=v2/play
-&from=assets-uxidone.github.io/assets/music/putvejini
-                </pre>
+                <p>Invalid parameters received</p>
+                <pre>${window.location.href}</pre>
+                <p>Expected format:</p>
+                <pre>api-uxidone.github.io/api/music?player=v2/play/musicplayer&version=v2/play&from=assets/music/putvejini</pre>
             `;
         }
     </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
 </head>
 <body>
     Loading music player...
