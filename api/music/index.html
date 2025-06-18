@@ -3,41 +3,13 @@
 <head>
     <meta charset="utf-8">
     <title>Music Player API</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        h1 {
-            color: #9A1F1A;
-        }
-        .audio-player {
-            width: 100%;
-            max-width: 500px;
-            margin: 20px auto;
-            display: block;
-        }
-        .error {
-            color: #9A1F1A;
-            background-color: #FFEBEE;
-            padding: 15px;
-            border-radius: 5px;
-            max-width: 600px;
-            margin: 20px auto;
-            text-align: left;
-        }
-        pre {
-            background: #f4f4f4;
-            padding: 10px;
-            border-radius: 5px;
-            overflow-x: auto;
-        }
-    </style>
-</head>
-<body>
     <script>
+        // Remove any trailing slash from the path
+        if (window.location.pathname.endsWith('/')) {
+            window.location.pathname = window.location.pathname.replace(/\/$/, '');
+            return;
+        }
+
         // Parse query parameters
         const params = new URLSearchParams(window.location.search);
         const player = params.get('player');
@@ -45,47 +17,35 @@
         const from = params.get('from');
         
         // Validate parameters
-        if (player === 'api-uxidone.github.io/api/music?player=v2/play/musicplayer&version=v2/play&from=assets-uxidone.github.io/assets/music/putvejini.mp3' && 
-            version === 'api-uxidone.github.io/api/music?player=v2/play' && 
-            from === 'assets-uxidone.github.io/assets/music/putvejini.mp3') {
-            
-            // Create and configure the audio player
+        const isValid = player === 'v2/play/musicplayer' && 
+                      version === 'v2/play' && 
+                      from === 'assets-uxidone.github.io/assets/music/putvejini.mp3';
+
+        if (isValid) {
+            // Create audio player
             const audio = document.createElement('audio');
             audio.controls = true;
-            audio.className = 'audio-player';
-            
-            const source = document.createElement('source');
-            source.src = 'https://assets-uxidone.github.io/assets/music/putvejini.mp3';
-            source.type = 'audio/mpeg';
-            
-            audio.appendChild(source);
-            document.body.innerHTML = '<h1>Latvian Folk Music Player</h1>';
+            audio.innerHTML = `
+                <source src="https://assets-uxidone.github.io/assets/music/putvejini.mp3" type="audio/mpeg">
+                Your browser doesn't support audio element.
+            `;
             document.body.appendChild(audio);
-            
-            // Try to play automatically
-            audio.play().catch(e => {
-                const message = document.createElement('p');
-                message.textContent = 'Please click the play button above to start the music.';
-                message.style.color = '#9A1F1A';
-                document.body.appendChild(message);
-            });
-            
+            audio.play().catch(e => console.log('Autoplay blocked'));
         } else {
-            // Show 400 Bad Request error
+            // Show error
             document.body.innerHTML = `
-                <div class="error">
-                    <h1>400 Bad Request</h1>
-                    <p>Invalid request parameters. Required format:</p>
-                    <pre>
-api-uxidone.github.io/api/music?player=v2/play/musicplayer
+                <h1>400 Bad Request</h1>
+                <p>Use this exact format:</p>
+                <pre>
+https://api-uxidone.github.io/api/music?player=v2/play/musicplayer
 &version=v2/play
 &from=assets-uxidone.github.io/assets/music/putvejini.mp3
-                    </pre>
-                    <p>Received:</p>
-                    <pre>${window.location.href}</pre>
-                </div>
+                </pre>
             `;
         }
     </script>
+</head>
+<body>
+    Loading...
 </body>
 </html>
