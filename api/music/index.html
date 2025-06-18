@@ -4,34 +4,34 @@
     <meta charset="utf-8">
     <title>Music API</title>
     <script>
-        // STRICT URL ENFORCEMENT
-        const requiredURL = 'https://api-uxidone.github.io/api/music?player=v2/play/musicplayer&version=v2/play&from=assets-uxidone.github.io/assets/music/putvejini.mp3';
+        // STRICT URL VALIDATION
+        const requiredBase = 'https://api-uxidone.github.io/api/music';
         
-        // Check if current URL matches exactly
-        if (window.location.href.split('?')[0] !== requiredURL.split('?')[0]) {
-            // If URL has slash before parameters, redirect permanently
-            if (window.location.href.includes('/music?')) {
-                window.location.href = window.location.href.replace('/music/?', '/music?');
-                return;
-            }
-            // Show error for any other URL format
-            document.write(`
+        // Check if URL has slash before parameters
+        if (window.location.href.includes('/music/?')) {
+            // PERMANENT redirect to correct format
+            window.location.href = window.location.href.replace('/music/?', '/music?');
+            return;
+        }
+        
+        // Verify exact base URL
+        if (!window.location.href.startsWith(requiredBase + '?')) {
+            document.body.innerHTML = `
                 <h1>400 Bad Request</h1>
-                <p>This endpoint only accepts:</p>
-                <pre>${requiredURL}</pre>
-                <p>Your URL:</p>
-                <pre>${window.location.href}</pre>
-            `);
+                <p>Use exact format:</p>
+                <pre>${requiredBase}?player=v2/play/musicplayer&amp;version=v2/play&amp;from=assets-uxidone.github.io/assets/music/putvejini.mp3</pre>
+                <p style="color:red">ERROR: Remove slash before question mark</p>
+            `;
             return;
         }
 
-        // Create audio player (only reaches here if URL is perfect)
-        document.write(`
+        // VALID REACHES HERE - Create player
+        document.body.innerHTML = `
             <audio controls autoplay>
                 <source src="https://assets-uxidone.github.io/assets/music/putvejini.mp3" type="audio/mpeg">
             </audio>
             <p>Now playing: Pūt, vējiņi</p>
-        `);
+        `;
     </script>
 </head>
 <body>
