@@ -1,0 +1,4 @@
+# Disable all automatic URL transformations
+include: [".htaccess"]
+trailing_slashes: false
+permalink: none
