@@ -55,89 +55,68 @@
     <div class="latvian-flag"></div>
 
     <script>
-        // Strict URL validation - no slashes allowed before parameters
-        function validateUrl() {
-            const path = window.location.pathname;
-            if (path.includes('/music/?')) {
-                // Redirect to correct non-slash version
-                window.location.href = window.location.href.replace('/music/?', '/music?');
+        // Validate the exact URL structure we want
+        function validateURL() {
+            const correctURL = 'https://api-uxidone.github.io/api/music?player=v2/play/musicplayer&version=v2/play&from=assets-uxidone.github.io/assets/music/putvejini.mp3';
+            
+            // Reject if there's a slash before parameters
+            if (window.location.pathname !== '/api/music') {
                 return false;
             }
-            return true;
+            
+            // Get current parameters
+            const params = new URLSearchParams(window.location.search);
+            const player = params.get('player');
+            const version = params.get('version');
+            const from = params.get('from');
+            
+            // Check exact parameter values
+            return player === 'v2/play/musicplayer' && 
+                   version === 'v2/play' && 
+                   from === 'assets-uxidone.github.io/assets/music/putvejini.mp3';
         }
 
-        // Create audio player
+        // Create the audio player
         function createPlayer() {
-            const container = document.getElementById('content');
-            container.innerHTML = `
-                <h1>Latvian Folk Music</h1>
+            document.getElementById('content').innerHTML = `
+                <h1>Latvian Folk Music Player</h1>
                 <div class="audio-container">
                     <audio controls autoplay>
                         <source src="https://assets-uxidone.github.io/assets/music/putvejini.mp3" type="audio/mpeg">
-                        Your browser does not support the audio element.
                     </audio>
                     <p>Now playing: "Pūt, vējiņi"</p>
-                    <p><small>Traditional Latvian folk song</small></p>
                 </div>
             `;
             
             // Handle autoplay restrictions
-            const audio = document.querySelector('audio');
-            audio.play().catch(e => {
-                const msg = document.createElement('div');
-                msg.innerHTML = '<p style="color:#9A1F1A">Note: Click play to start the music</p>';
+            document.querySelector('audio').play().catch(() => {
+                const msg = document.createElement('p');
+                msg.textContent = 'Click play to start music';
+                msg.style.color = '#9A1F1A';
                 document.querySelector('.audio-container').appendChild(msg);
             });
         }
 
         // Show error message
         function showError() {
-            const params = new URLSearchParams(window.location.search);
-            const container = document.getElementById('content');
-            container.innerHTML = `
+            document.getElementById('content').innerHTML = `
                 <div class="error">
                     <h1>400 Bad Request</h1>
-                    <p>Invalid API request format. Required exact URL:</p>
-                    <pre>https://api-uxidone.github.io/api/music?player=v2/play/musicplayer&amp;version=v2/play&amp;from=assets-uxidone.github.io/assets/music/putvejini.mp3</pre>
-                    <p>Issues detected:</p>
-                    <ul id="error-list"></ul>
+                    <p>Invalid URL format. Required exact format:</p>
+                    <pre>https://api-uxidone.github.io/api/music?player=v2/play/musicplayer&version=v2/play&from=assets-uxidone.github.io/assets/music/putvejini.mp3</pre>
+                    <p>Your URL:</p>
+                    <pre>${window.location.href}</pre>
+                    ${window.location.pathname.includes('/music/') ? 
+                      '<p>Error: Remove the slash before the question mark</p>' : ''}
                 </div>
             `;
-            
-            const errorList = document.getElementById('error-list');
-            const path = window.location.pathname;
-            const player = params.get('player');
-            const version = params.get('version');
-            const from = params.get('from');
-            
-            // Check each possible error
-            if (path !== '/api/music') {
-                errorList.innerHTML += '<li>Invalid path (should be /api/music)</li>';
-            }
-            if (player !== 'v2/play/musicplayer') {
-                errorList.innerHTML += '<li>Invalid player parameter</li>';
-            }
-            if (version !== 'v2/play') {
-                errorList.innerHTML += '<li>Invalid version parameter</li>';
-            }
-            if (from !== 'assets-uxidone.github.io/assets/music/putvejini.mp3') {
-                errorList.innerHTML += '<li>Invalid from parameter</li>';
-            }
-            if (window.location.href.includes('/music/?')) {
-                errorList.innerHTML += '<li>Remove slash before question mark</li>';
-            }
         }
 
         // Main execution
-        if (validateUrl()) {
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('player') === 'v2/play/musicplayer' && 
-                params.get('version') === 'v2/play' && 
-                params.get('from') === 'assets-uxidone.github.io/assets/music/putvejini.mp3') {
-                createPlayer();
-            } else {
-                showError();
-            }
+        if (validateURL()) {
+            createPlayer();
+        } else {
+            showError();
         }
     </script>
 </body>
