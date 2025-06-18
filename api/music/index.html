@@ -39,47 +39,32 @@
             border-radius: 5px;
             overflow-x: auto;
         }
-        .latvian-flag {
-            height: 20px;
-            background: linear-gradient(to bottom, #9A1F1A, #9A1F1A 40%, white 40%, white 60%, #9A1F1A 60%);
-            margin: 10px 0;
-        }
     </style>
 </head>
 <body>
-    <div class="latvian-flag"></div>
     <div id="content">
         <!-- Content will be loaded by JavaScript -->
         <p>Loading music player...</p>
     </div>
-    <div class="latvian-flag"></div>
 
     <script>
-        // Validate the exact URL structure we want
+        // STRICT URL VALIDATION
         function validateURL() {
-            const correctURL = 'https://api-uxidone.github.io/api/music?player=v2/play/musicplayer&version=v2/play&from=assets-uxidone.github.io/assets/music/putvejini.mp3';
-            
-            // Reject if there's a slash before parameters
+            // Check if path is EXACTLY '/api/music' with no trailing slash
             if (window.location.pathname !== '/api/music') {
                 return false;
             }
             
-            // Get current parameters
             const params = new URLSearchParams(window.location.search);
-            const player = params.get('player');
-            const version = params.get('version');
-            const from = params.get('from');
-            
-            // Check exact parameter values
-            return player === 'v2/play/musicplayer' && 
-                   version === 'v2/play' && 
-                   from === 'assets-uxidone.github.io/assets/music/putvejini.mp3';
+            return params.get('player') === 'v2/play/musicplayer' && 
+                   params.get('version') === 'v2/play' && 
+                   params.get('from') === 'assets-uxidone.github.io/assets/music/putvejini.mp3';
         }
 
-        // Create the audio player
+        // Create audio player
         function createPlayer() {
             document.getElementById('content').innerHTML = `
-                <h1>Latvian Folk Music Player</h1>
+                <h1>Latvian Folk Music</h1>
                 <div class="audio-container">
                     <audio controls autoplay>
                         <source src="https://assets-uxidone.github.io/assets/music/putvejini.mp3" type="audio/mpeg">
@@ -99,20 +84,31 @@
 
         // Show error message
         function showError() {
+            const hasSlash = window.location.pathname.includes('/music/');
+            
             document.getElementById('content').innerHTML = `
                 <div class="error">
                     <h1>400 Bad Request</h1>
                     <p>Invalid URL format. Required exact format:</p>
-                    <pre>https://api-uxidone.github.io/api/music?player=v2/play/musicplayer&version=v2/play&from=assets-uxidone.github.io/assets/music/putvejini.mp3</pre>
+                    <pre>https://api-uxidone.github.io/api/music?player=v2/play/musicplayer&amp;version=v2/play&amp;from=assets-uxidone.github.io/assets/music/putvejini.mp3</pre>
+                    ${hasSlash ? '<p><strong>Error:</strong> Remove the slash before the question mark</p>' : ''}
                     <p>Your URL:</p>
                     <pre>${window.location.href}</pre>
-                    ${window.location.pathname.includes('/music/') ? 
-                      '<p>Error: Remove the slash before the question mark</p>' : ''}
                 </div>
             `;
+            
+            // If there's a slash, offer to redirect to correct format
+            if (hasSlash) {
+                const correctURL = window.location.href.replace('/music/?', '/music?');
+                const redirectBtn = document.createElement('button');
+                redirectBtn.textContent = 'Click to use correct URL format';
+                redirectBtn.style.marginTop = '10px';
+                redirectBtn.onclick = () => window.location.href = correctURL;
+                document.querySelector('.error').appendChild(redirectBtn);
+            }
         }
 
-        // Main execution
+        // MAIN EXECUTION
         if (validateURL()) {
             createPlayer();
         } else {
