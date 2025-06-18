@@ -1,0 +1,12 @@
+# Prevent automatic slash addition
+DirectorySlash Off
+RewriteEngine On
+
+# Redirect any slash versions to non-slash
+RewriteCond %{REQUEST_URI} ^/api/music/$
+RewriteRule ^(.*)/$ /$1 [R=301,L]
+
+# Redirect any /music/? to /music?
+RewriteCond %{REQUEST_URI} ^/api/music/$
+RewriteCond %{QUERY_STRING} ^(.+)$
+RewriteRule ^api/music/$ /api/music?%1 [R=301,L]
