@@ -8,10 +8,10 @@
 
   // ---------- DOMAIN WHITELIST ----------
   const ALLOWED_DOMAINS = [
-    'uxidone.github.io',   // your own domain
+    'https://uxidone.github.io',   // your own domain
     'localhost',
     '127.0.0.1',
-    'krutly.github.io'
+    'https://krutly.github.io'
     // Add any other domains you want to allow
   ];
 
